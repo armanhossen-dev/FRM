@@ -3,7 +3,7 @@
 #include<string.h>
 
 #define FILENAME "users_info.txt"
-#define USER_OR_PASS_LEN 10
+#define USER_OR_PASS_LEN 11
 
 
 int user_exists(const char *u_name, const char *pass);
