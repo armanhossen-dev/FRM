@@ -119,7 +119,88 @@ void  User_Login_Portal(){
         }
 }
 
+void signup() {
+    FILE *file = fopen("users.txt", "a");
+    char username[50], password[50], confirm_password[50];
 
+    if (file == NULL) {
+        printf("Error opening file for signup.\n");
+        return;
+    }
+    signup_page:
+    system("cls");
+    printf("============================================================\n");
+    printf("                          Sign Up                           \n");
+    printf("============================================================\n\n");
+
+    printf("Enter a username: ");
+    scanf(" %[^\n]", username);
+
+    printf("Enter a password: ");
+    scanf(" %[^\n]", password);
+
+    printf("Confirm your password: ");
+    scanf(" %[^\n]", confirm_password);
+
+    if (strcmp(password, confirm_password) != 0) {
+        printf("\nPasswords do not match! Please try again.\n");
+        fclose(file);
+        system("pause");
+        goto signup_page;        
+    }
+
+    fprintf(file, "%s %s\n", username, password);
+    fclose(file);
+
+    printf("\nSign up successful! You can now log in.\n");
+    system("pause");
+    system("cls");
+    login();
+}
+
+
+void login() {
+    FILE *file = fopen("users.txt", "r");
+    char username[50], password[50];
+    char stored_username[50], stored_password[50];
+    int login_successful = 0;
+
+    if (file == NULL) {
+        printf("Error opening file for login. Have you signed up?\n");
+        signup();
+    }
+    login_page:
+    system("cls");
+    printf("============================================================\n");
+    printf("                           Log In                           \n");
+    printf("============================================================\n\n");
+
+    printf("Enter your username: ");
+    scanf(" %[^\n]", username);
+
+    printf("Enter your password: ");
+    scanf(" %[^\n]", password);
+
+    // Read from file and check credentials
+    while (fscanf(file, "%s %s", stored_username, stored_password) != EOF) {
+        if (strcmp(username, stored_username) == 0 && strcmp(password, stored_password) == 0) {
+            login_successful = 1;   //1 means true
+            break;
+        }
+    }
+    fclose(file);
+
+    if (login_successful) {
+        printf("\nLogin successful! Welcome, %s.\n", username);
+        system("pause");
+        system("cls");
+        user_dashboard();
+    } else {
+        printf("\nInvalid username or password. Please try again.\n");
+        system("pause");
+        goto login_page;
+    }
+}
 
 void admin_Login_Portal() {
     char username[50], password[50];
@@ -187,5 +268,10 @@ void admin_Dashboard() {
                 system("pause");
                 goto admin_dash;
         }
+    
+}
+
+
+void user_dashboard(){
     
 }
