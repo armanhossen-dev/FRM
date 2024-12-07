@@ -12,7 +12,7 @@
 #define MAX_USERNAME 50
 #define MAX_PASSWORD 50
 
-typedef struct {
+typedef struct{
     char flight_number[10];
     char departure[30];
     char destination[30];
@@ -22,7 +22,19 @@ typedef struct {
     int total_seats;
 } Flight;
 
-typedef struct {
+// Flight structure
+typedef struct Flight {
+    int flightID;
+    char destination[50];
+    char departureTime[20];
+    int availableSeats;
+    struct Flight* next;
+} Flight;
+
+Flight* head = NULL; // Head of the linked list
+
+
+typedef struct b{
     char name[50];
     int age;
     char flight_number[10];
@@ -35,20 +47,20 @@ typedef struct {
 Flight flights[MAX_FLIGHTS];
 int flight_count = 0;
 
-// Function prototypes
+// Function 
 void adminLoginPortal();
-void userLoginPortal();
 
 void adminDashboard();
-
-
-void userDashboard();
-void signup();
-void login();
-
 void viewAvailableFlights();
 void addNewFlight();
 void updateFlight();
+
+
+void userLoginPortal();
+void signup();
+void login();
+
+void userDashboard();
 void bookTickets();
 void updateBooking();
 void viewFlights();
@@ -89,7 +101,7 @@ void adminLoginPortal() {
     char username[MAX_USERNAME], password[MAX_PASSWORD];
     int attempts = 3;
 
-    while (attempts--) {
+    while (attempts--) {//attemps 3 bar nite par be, while(0) not true then repeat hobe na
         system("cls || clear");
         printf("Admin Login Portal\n");
         printf("Enter Admin Username: ");
@@ -107,7 +119,8 @@ void adminLoginPortal() {
         }
     }
     printf("Too many failed attempts. Exiting...\n");
-    exit(1);
+    system("pause");
+    main();
 }
 
 void userLoginPortal() {
@@ -203,7 +216,9 @@ void adminDashboard() {
     int choice;
     while (1) {
         system("cls || clear");
-        printf("Admin Dashboard\n");
+        printf("============================================================\n");
+        printf("                      Admin Dashboard                       \n");
+        printf("============================================================\n\n");
         printf("1. View Flights\n");
         printf("2. Add Flight\n");
         printf("3. Update Flight\n");
@@ -287,9 +302,10 @@ void viewAvailableFlights() {
     fclose(file);
     printf("============================================================\n");
     system("pause");
+    adminDashboard();
 }
 
-// Add a new flight
+
 void addNewFlight() {
     FILE *file = fopen(FLIGHTS_FILE, "a");
     if (file == NULL) {
@@ -306,16 +322,22 @@ void addNewFlight() {
     printf("============================================================\n");
     printf("Enter Flight Number: ");
     scanf(" %[^\n]", new_flight.flight_number);
+
     printf("Enter Departure Location: ");
     scanf(" %[^\n]", new_flight.departure);
+
     printf("Enter Destination Location: ");
     scanf(" %[^\n]", new_flight.destination);
+
     printf("Enter Time (e.g., 10:30 AM): ");
     scanf(" %[^\n]", new_flight.time);
+
     printf("Enter Date (e.g., 12-Dec-2024): ");
     scanf(" %[^\n]", new_flight.date);
+
     printf("Enter Price per Seat: ");
     scanf("%f", &new_flight.price_per_seat);
+    
     printf("Enter Total Seats: ");
     scanf("%d", &new_flight.total_seats);
 
@@ -331,9 +353,9 @@ void addNewFlight() {
     fclose(file);
     printf("\nFlight added successfully!\n");
     system("pause");
+    adminDashboard();
+    
 }
-
-// Book a ticket
 void bookTickets() {
     FILE *flightsFile = fopen(FLIGHTS_FILE, "r");
     FILE *bookingsFile = fopen(BOOKINGS_FILE, "a");
@@ -426,4 +448,71 @@ void bookTickets() {
 
     printf("\nBooking successful! Total Price: $%.2f\n", new_booking.price);
     system("pause");
+}
+
+// Function to update a flight's details
+void updateFlight() {
+    int id, choice;
+    Flight* temp = head;
+
+    printf("Enter Flight ID to update: ");
+    scanf("%d", &id);
+
+    // Search for the flight by ID
+    while (temp != NULL && temp->flightID != id) {
+        temp = temp->next;
+    }
+
+    if (temp == NULL) {
+        printf("Flight with ID %d not found.\n", id);
+        return;
+    }
+
+    printf("Flight found! What would you like to update?\n");
+    printf("1. Destination\n");
+    printf("2. Departure Time\n");
+    printf("3. Available Seats\n");
+    printf("Enter your choice: ");
+    scanf("%d", &choice);
+
+    switch (choice) {
+        case 1:
+            printf("Enter new destination: ");
+            scanf("%s", temp->destination);
+            break;
+        case 2:
+            printf("Enter new departure time: ");
+            scanf("%s", temp->departureTime);
+            break;
+        case 3:
+            printf("Enter new available seats: ");
+            scanf("%d", &temp->availableSeats);
+            break;
+        default:
+            printf("Invalid choice.\n");
+            return;
+    }
+
+    printf("Flight updated successfully!\n");
+}
+
+// Utility function to add a flight for testing
+void addFlight(int id, char* dest, char* time, int seats) {
+    Flight* newFlight = (Flight*)malloc(sizeof(Flight));
+    newFlight->flightID = id;
+    strcpy(newFlight->destination, dest);
+    strcpy(newFlight->departureTime, time);
+    newFlight->availableSeats = seats;
+    newFlight->next = head;
+    head = newFlight;
+}
+
+// Utility function to display all flights
+void displayFlights() {
+    Flight* temp = head;
+    while (temp != NULL) {
+        printf("Flight ID: %d\nDestination: %s\nDeparture Time: %s\nAvailable Seats: %d\n\n",
+               temp->flightID, temp->destination, temp->departureTime, temp->availableSeats);
+        temp = temp->next;
+    }
 }
