@@ -1,54 +1,16 @@
-
+// File: final.c
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-//** */
-int main() {
-    int choice;
-    //while (1) { 
-        system("cls");
-        printf("============================================================\n");
-        printf("        Welcome to the Flight Reservation System            \n");
-        printf("============================================================\n");
-        printf("1. Admin Login\n");
-        printf("2. User Login\n");
-        printf("3. Exit\n");
-        printf("Enter your choice: ");
-        scanf("%d", &choice);
-
-        switch (choice) {
-            case 1:
-                //adminLoginPortal();
-                break;
-            case 2:
-                //userLoginPortal();
-                break;
-            case 3:
-                printf("\nExiting the program. Goodbye!\n");
-                exit(0);
-            default:
-                printf("Invalid choice. Please try again.\n");
-        }
-    //}
-    return 0;
-}
-/*
-// Constants and macros for configuration
 #define USER_INFO_FILE "users_info.txt"
-#define FLIGHTS_FILE "flights.txt"
-#define BOOKINGS_FILE "bookings.txt"
+#define FLIGHTS_FILE   "flights.txt"
+#define BOOKINGS_FILE  "bookings.txt"
 #define ADMIN_USERNAME "admin"
 #define ADMIN_PASSWORD "admin123"
-#define MAX_FLIGHTS 8
+#define MAX_FLIGHTS  8
 #define MAX_USERNAME 50
 #define MAX_PASSWORD 50
-
-
-
-#define FLIGHTS_FILE "flights.txt"
-#define BOOKINGS_FILE "bookings.txt"
-#define MAX_FLIGHTS 8
 
 typedef struct {
     char flight_number[10];
@@ -67,7 +29,6 @@ typedef struct {
     int seat_number;
     float price;
 } Booking;
-
 
 
 // Structs for managing flights and bookings
@@ -96,10 +57,14 @@ int flight_count = 0;
 // Function prototypes
 void adminLoginPortal();
 void userLoginPortal();
+
 void adminDashboard();
+
+
 void userDashboard();
 void signup();
 void login();
+
 void viewAvailableFlights();
 void addNewFlight();
 void updateFlight();
@@ -107,12 +72,44 @@ void bookTickets();
 void updateBooking();
 void viewFlights();
 
+int main() {
+    int choice;
+    main_page:
+        system("cls || clear");
+        printf("============================================================\n");
+        printf("        Welcome to the Flight Reservation System            \n");
+        printf("============================================================\n");
+        printf("1. Admin Login\n");
+        printf("2. User Login\n");
+        printf("3. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                system("cls || clear");
+                adminLoginPortal();
+                break;
+            case 2:
+                userLoginPortal();
+                break;
+            case 3:
+                printf("\nExiting the program. Goodbye!\n");
+                exit(0);
+            default:
+                printf("Invalid choice. Please try again.\n");
+                goto main_page;
+        }
+    
+    return 0;
+}
+
 void adminLoginPortal() {
     char username[MAX_USERNAME], password[MAX_PASSWORD];
     int attempts = 3;
 
     while (attempts--) {
-        system("cls");
+        system("cls || clear");
         printf("Admin Login Portal\n");
         printf("Enter Admin Username: ");
         scanf(" %[^\n]", username);
@@ -135,7 +132,7 @@ void adminLoginPortal() {
 void userLoginPortal() {
     int choice;
     while (1) {
-        system("cls");
+        system("cls || clear");
         printf("User Login Portal\n");
         printf("1. Sign Up\n");
         printf("2. Login\n");
@@ -167,7 +164,7 @@ void signup() {
         return;
     }
 
-    system("cls");
+    system("cls || clear");
     printf("Sign Up\n");
     printf("Enter username: ");
     scanf(" %[^\n]", username);
@@ -224,7 +221,7 @@ void login() {
 void adminDashboard() {
     int choice;
     while (1) {
-        system("cls");
+        system("cls || clear");
         printf("Admin Dashboard\n");
         printf("1. View Flights\n");
         printf("2. Add Flight\n");
@@ -254,7 +251,7 @@ void adminDashboard() {
 void userDashboard() {
     int choice;
     while (1) {
-        system("cls");
+        system("cls || clear");
         printf("User Dashboard\n");
         printf("1. Book Tickets\n");
         printf("2. View Flights\n");
@@ -293,7 +290,7 @@ void viewAvailableFlights() {
         return;
     }
 
-    system("cls");
+    system("cls || clear");
     printf("============================================================\n");
     printf("                   Available Flights                        \n");
     printf("============================================================\n");
@@ -322,7 +319,7 @@ void addNewFlight() {
 
     Flight new_flight;
 
-    system("cls");
+    system("cls || clear");
     printf("============================================================\n");
     printf("                     Add New Flight                         \n");
     printf("============================================================\n");
@@ -371,7 +368,7 @@ void bookTickets() {
     float price_per_seat = 0.0;
     int available_seats = 0;
 
-    system("cls");
+    system("cls || clear");
     printf("============================================================\n");
     printf("                   Available Flights                        \n");
     printf("============================================================\n");
@@ -449,4 +446,3 @@ void bookTickets() {
     printf("\nBooking successful! Total Price: $%.2f\n", new_booking.price);
     system("pause");
 }
-*/

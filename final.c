@@ -3,16 +3,14 @@
 #include <string.h>
 
 #define USER_INFO_FILE "users_info.txt"
-#define USER_PASS_SIZE 10 // user or password length
+#define USER_PASS_SIZE 10 // username or password length
 
-// Permanent credentials for admin
 #define ADMIN_USERNAME "admin"
 #define ADMIN_PASSWORD "admin123"
-
 #define MAX_FLIGHTS 8
 
 // Flight structure
-typedef struct f{
+typedef struct{
     char flight_number[10];
     char departure[30];
     char destination[30];
