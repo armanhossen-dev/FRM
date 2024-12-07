@@ -23,6 +23,19 @@ typedef struct
     int total_seats;
 } Flight;
 
+
+// Data structure for storing user bookings
+typedef struct {
+    char name[50];
+    int age;
+    char flight_number[10];
+    int seat_number;
+    float price;
+} Booking;
+
+
+
+
 Flight flights[MAX_FLIGHTS];
 int flight_count = 0;
 
@@ -474,4 +487,169 @@ void update_Flight()
 
 void user_dashboard()
 {
+}
+
+// User Dashboard
+void user_dashboard() {
+    int choice;
+    system("cls");
+    printf("============================================================\n");
+    printf("                      User Dashboard                        \n");
+    printf("============================================================\n");
+    printf("\n1. Book Tickets\n");
+    printf("2. View Available Flights\n");
+    printf("3. Update Booking\n");
+    printf("4. Logout\n");
+    printf("------------------------------------------------------------\n");
+    printf("Enter your choice: ");
+    scanf("%d", &choice);
+
+    switch (choice) {
+        case 1:
+            user_booking_tickets();
+            break;
+        case 2:
+            view_flights();
+            break;
+        case 3:
+            update_Booking();
+            break;
+        case 4:
+            printf("Logging out...\n");
+            system("pause");
+            exit(0);
+        default:
+            printf("Invalid choice. Try again.\n");
+            system("pause");
+            user_dashboard();
+    }
+}
+
+// User Booking Tickets
+void user_booking_tickets() {
+    FILE *file = fopen("bookings.txt", "a");
+    if (file == NULL) {
+        printf("Error: Unable to open bookings file.\n");
+        system("pause");
+        user_dashboard();
+        return;
+    }
+
+    Booking new_booking;
+    system("cls");
+    printf("============================================================\n");
+    printf("                      Book Tickets                          \n");
+    printf("============================================================\n");
+
+    printf("Enter Your Name: ");
+    scanf(" %[^\n]", new_booking.name);
+    printf("Enter Your Age: ");
+    scanf("%d", &new_booking.age);
+    printf("Enter Flight Number (e.g., BG001): ");
+    scanf(" %[^\n]", new_booking.flight_number);
+    printf("Enter Seat Number: ");
+    scanf("%d", &new_booking.seat_number);
+
+    // Example price per seat
+    new_booking.price = 500.0;
+
+    // Write booking to file
+    fprintf(file, "%s, %d, %s, %d, %.2f\n", new_booking.name, new_booking.age, 
+            new_booking.flight_number, new_booking.seat_number, new_booking.price);
+
+    printf("Booking successful! Total Price: %.2f\n", new_booking.price);
+    fclose(file);
+
+    system("pause");
+    user_dashboard();
+}
+
+// View Flights
+void view_flights() {
+    FILE *file = fopen("flights.txt", "r");
+    char flight_info[200];
+    system("cls");
+
+    printf("============================================================\n");
+    printf("                   Available Flights                        \n");
+    printf("============================================================\n");
+
+    if (file == NULL) {
+        printf("No flights available. Please check later.\n");
+    } else {
+        while (fgets(flight_info, sizeof(flight_info), file) != NULL) {
+            printf("%s", flight_info);
+        }
+        fclose(file);
+    }
+
+    printf("------------------------------------------------------------\n");
+    system("pause");
+    user_dashboard();
+}
+
+// Update Booking
+void update_Booking() {
+    FILE *file = fopen("bookings.txt", "r");
+    FILE *tempFile = fopen("temp_bookings.txt", "w");
+    char booking_info[200], name_to_update[50];
+    int found = 0, new_seat;
+    float price = 500.0;
+
+    if (file == NULL || tempFile == NULL) {
+        printf("Error: Unable to open file for updating bookings.\n");
+        system("pause");
+        user_dashboard();
+        return;
+    }
+
+    system("cls");
+    printf("============================================================\n");
+    printf("                      Update Booking                        \n");
+    printf("============================================================\n");
+
+    printf("Enter Your Name to Update Booking: ");
+    scanf(" %[^\n]", name_to_update);
+
+    while (fgets(booking_info, sizeof(booking_info), file) != NULL) {
+        Booking booking;
+        sscanf(booking_info, " %[^,], %d, %[^,], %d, %f",
+               booking.name, &booking.age, booking.flight_number, 
+               &booking.seat_number, &booking.price);
+
+        if (strcmp(booking.name, name_to_update) == 0) {
+            found = 1;
+
+            printf("Booking Found: %s, %d, %s, %d, %.2f\n",
+                   booking.name, booking.age, booking.flight_number, 
+                   booking.seat_number, booking.price);
+
+            printf("Enter New Seat Number: ");
+            scanf("%d", &new_seat);
+
+            booking.seat_number = new_seat;
+            booking.price = price;  // Recalculate price if needed
+
+            fprintf(tempFile, "%s, %d, %s, %d, %.2f\n", booking.name, booking.age, 
+                    booking.flight_number, booking.seat_number, booking.price);
+
+            printf("Booking Updated Successfully!\n");
+        } else {
+            fprintf(tempFile, "%s", booking_info);  // Copy unchanged data
+        }
+    }
+
+    if (!found) {
+        printf("No booking found with the name '%s'.\n", name_to_update);
+    }
+
+    fclose(file);
+    fclose(tempFile);
+
+    // Replace old file with updated data
+    remove("bookings.txt");
+    rename("temp_bookings.txt", "bookings.txt");
+
+    system("pause");
+    user_dashboard();
 }
