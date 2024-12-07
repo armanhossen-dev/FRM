@@ -31,25 +31,6 @@ typedef struct {
 } Booking;
 
 
-// Structs for managing flights and bookings
-typedef struct {
-    char flight_number[10];
-    char departure[30];
-    char destination[30];
-    char time[10];
-    char date[15];
-    float price_per_seat;
-    int total_seats;
-} Flight;
-
-typedef struct {
-    char name[50];
-    int age;
-    char flight_number[10];
-    int seat_number;
-    float price;
-} Booking;
-
 // Global variables
 Flight flights[MAX_FLIGHTS];
 int flight_count = 0;
