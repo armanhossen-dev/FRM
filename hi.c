@@ -1,8 +1,39 @@
-// File: final.c
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+//** */
+int main() {
+    int choice;
+    //while (1) { 
+        system("cls");
+        printf("============================================================\n");
+        printf("        Welcome to the Flight Reservation System            \n");
+        printf("============================================================\n");
+        printf("1. Admin Login\n");
+        printf("2. User Login\n");
+        printf("3. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                //adminLoginPortal();
+                break;
+            case 2:
+                //userLoginPortal();
+                break;
+            case 3:
+                printf("\nExiting the program. Goodbye!\n");
+                exit(0);
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    //}
+    return 0;
+}
+/*
 // Constants and macros for configuration
 #define USER_INFO_FILE "users_info.txt"
 #define FLIGHTS_FILE "flights.txt"
@@ -75,36 +106,6 @@ void updateFlight();
 void bookTickets();
 void updateBooking();
 void viewFlights();
-
-int main() {
-    int choice;
-    while (1) {
-        system("cls");
-        printf("============================================================\n");
-        printf("        Welcome to the Flight Reservation System            \n");
-        printf("============================================================\n");
-        printf("1. Admin Login\n");
-        printf("2. User Login\n");
-        printf("3. Exit\n");
-        printf("Enter your choice: ");
-        scanf("%d", &choice);
-
-        switch (choice) {
-            case 1:
-                adminLoginPortal();
-                break;
-            case 2:
-                userLoginPortal();
-                break;
-            case 3:
-                printf("\nExiting the program. Goodbye!\n");
-                exit(0);
-            default:
-                printf("Invalid choice. Please try again.\n");
-        }
-    }
-    return 0;
-}
 
 void adminLoginPortal() {
     char username[MAX_USERNAME], password[MAX_PASSWORD];
@@ -448,3 +449,4 @@ void bookTickets() {
     printf("\nBooking successful! Total Price: $%.2f\n", new_booking.price);
     system("pause");
 }
+*/

@@ -12,8 +12,7 @@
 #define MAX_FLIGHTS 8
 
 // Flight structure
-typedef struct
-{
+typedef struct f{
     char flight_number[10];
     char departure[30];
     char destination[30];
@@ -25,7 +24,7 @@ typedef struct
 
 
 // Data structure for storing user bookings
-typedef struct {
+typedef struct b{
     char name[50];
     int age;
     char flight_number[10];
@@ -34,7 +33,7 @@ typedef struct {
 } Booking;
 
 
-
+//int pappu[3];
 
 Flight flights[MAX_FLIGHTS];
 int flight_count = 0;
@@ -72,7 +71,7 @@ int main()
 {
     int choice;
 home_screen:
-    system("cls");
+    system("cls");// full screen clear kore dei
     printf("============================================================\n");
     printf("        Welcome to the Flight Reservation System       \n");
     printf("============================================================\n");
@@ -81,11 +80,10 @@ home_screen:
     printf("1. Admin Login\n");
     printf("2. User Login\n\n");
     printf("3. Exit\n");
-    printf("Enter your choice (e.g., 1): _");
+    printf("Enter your choice (e.g., 1): ");
     scanf("%d", &choice);
 
-    switch (choice)
-    {
+    switch (choice){
     case 1:
         system("cls");
         admin_Login_Portal();
@@ -97,7 +95,7 @@ home_screen:
     case 3:
         system("cls");
         printf("\n\nExiting the program. Goodbye!...........\n\n\n");
-        exit(0);
+        exit(0); // eta full code off kore dei 
     default:
         system("cls");
         goto home_screen;
@@ -240,17 +238,16 @@ void admin_Login_Portal()
         printf("                       Admin Login Portal                   \n");
         printf("============================================================\n\n");
 
-        printf("Enter Admin Username: ");
+        printf("Enter Admin Username: "); 
         scanf(" %[^\n]", username);
 
         printf("Enter Admin Password: ");
         scanf(" %[^\n]", password);
-
-        // Check credentials
+        // Check credentials 
         if (strcmp(username, ADMIN_USERNAME) == 0 && strcmp(password, ADMIN_PASSWORD) == 0)
         {
             printf("\nLogin Successful! Welcome, Admin!\n");
-            system("pause");
+            system("pause"); // press any key  to continue
             system("cls");
             admin_dashboard();
         }
@@ -327,7 +324,6 @@ void view_Available_Flights()
             printf("%d. %s", flight_count, flight_info);
         }
         fclose(file);
-
         if (flight_count == 0)
         {
             printf("No flights available.\n");
@@ -344,7 +340,6 @@ void add_New_Flight()
 {
     FILE *file = fopen("flights.txt", "a");
     char flight_number[10], departure[50], destination[50], time[10], date[20];
-
     if (file == NULL)
     {
         printf("Error: Unable to open file for adding new flights.\n");
@@ -352,13 +347,12 @@ void add_New_Flight()
         admin_Dashboard();
         return;
     }
-
     system("cls");
     printf("============================================================\n");
     printf("                     Add New Flight                         \n");
     printf("============================================================\n");
 
-    printf("Enter Flight Number (e.g., BG001): ");
+    printf("Enter Flight Number (e.g., 1): ");
     scanf(" %[^\n]", flight_number);
     printf("Enter Departure Location (e.g., Dhaka): ");
     scanf(" %[^\n]", departure);
@@ -426,7 +420,7 @@ void update_Flight()
     scanf("%d", &chosen_flight);
 
     if (chosen_flight < 1 || chosen_flight > flight_count)
-    {
+    {//note kore te hobe
         printf("Invalid choice. Returning to the dashboard...\n");
         fclose(file);
         fclose(tempFile);
@@ -447,7 +441,7 @@ void update_Flight()
             printf("\nEditing Flight: %s", flight_info);
             char flight_number[10], departure[50], destination[50], time[10], date[20];
 
-            printf("Enter New Flight Number (e.g., BG001): ");
+            printf("Enter New Flight Number (e.g., 1): ");
             scanf(" %[^\n]", flight_number);
             printf("Enter New Departure Location (e.g., Dhaka): ");
             scanf(" %[^\n]", departure);
@@ -468,6 +462,7 @@ void update_Flight()
         {
             // Write the existing flight to the temp file
             fputs(flight_info, tempFile);
+            //!!!!!! cintea kore bujau and explain leke rako
         }
     }
 
@@ -475,7 +470,7 @@ void update_Flight()
     fclose(tempFile);
 
     // Replace old file with updated data
-    remove("flights.txt");
+    remove("flights.txt"); //existing file delete kore te se
     rename("temp_flights.txt", "flights.txt");
 
     printf("\nFlight updated successfully!\n");
@@ -545,12 +540,13 @@ void user_booking_tickets() {
     scanf(" %[^\n]", new_booking.name);
     printf("Enter Your Age: ");
     scanf("%d", &new_booking.age);
-    printf("Enter Flight Number (e.g., BG001): ");
+    printf("Enter Flight Number (e.g.,1): ");
     scanf(" %[^\n]", new_booking.flight_number);
     printf("Enter Seat Number: ");
     scanf("%d", &new_booking.seat_number);
 
     // Example price per seat
+    //todo: fixed seat price hobe na
     new_booking.price = 500.0;
 
     // Write booking to file
@@ -638,7 +634,7 @@ void update_Booking() {
             fprintf(tempFile, "%s", booking_info);  // Copy unchanged data
         }
     }
-
+    
     if (!found) {
         printf("No booking found with the name '%s'.\n", name_to_update);
     }
