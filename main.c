@@ -313,8 +313,8 @@ void book_New_Tickets(){
     printf("Enter Destination (e.g., Cox's Bazar): ");
     scanf(" %[^\n]", desti);
 
-    printf("Enter Departure Time (e.g., 11:00 AM): ");
-    scanf(" %[^\n]", depart);
+    /*printf("Enter Departure Time (e.g., 11:00 AM): ");
+    scanf(" %[^\n]", depart);*/
     
     printf("Enter Date (e.g., 01-Dec-2024): ");
     scanf(" %[^\n]", date_of_fly);
@@ -349,7 +349,7 @@ char f_num[10], desti, date[15];
         scanf("%d", &jatri[i].age);
         strcpy(jatri[i].flight_number, f_num);
         strcpy(jatri[i].destination, desti);
-        strcpy(jatri[i].departure, depart);
+        /*strcpy(jatri[i].departure, depart);*/
         strcpy(jatri[i].date, date_of_fly);
     }
 
