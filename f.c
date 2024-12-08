@@ -364,6 +364,7 @@ void userDashboard(char* username) {
         }
     } while (choice != 4);
 }
+
 void bookTickets(char* username) {
     FILE* file = fopen("bookings.txt", "a");
     if (!file) {
@@ -373,6 +374,7 @@ void bookTickets(char* username) {
 
     int flightID, seats;
     Flight* temp;
+    int availableFlights = 0;
 
     printf("Book Tickets\n");
 
@@ -380,25 +382,36 @@ void bookTickets(char* username) {
         // Display available flights
         printf("Available Flights:\n");
         temp = flightList;
+        availableFlights = 0;
+
         while (temp) {
-            printf("Flight ID: %d, Destination: %s, Date: %s, Seats Available: %d\n",
-                   temp->flightID, temp->destination, temp->date, temp->seatsAvailable);
+            if (temp->seatsAvailable > 0) { // Only show flights with available seats
+                printf("Flight ID: %d, Destination: %s, Date: %s, Seats Available: %d\n",
+                       temp->flightID, temp->destination, temp->date, temp->seatsAvailable);
+                availableFlights++;
+            }
             temp = temp->next;
+        }
+
+        if (availableFlights == 0) {
+            printf("No flights with available seats. Booking not possible.\n");
+            fclose(file);
+            return; // Exit the function if no flights are available
         }
 
         printf("Enter Flight ID to book: ");
         scanf("%d", &flightID);
 
-        // Check if the flight ID exists
+        // Check if the flight ID exists and has available seats
         temp = flightList;
-        while (temp && temp->flightID != flightID) {
+        while (temp && (temp->flightID != flightID || temp->seatsAvailable <= 0)) {
             temp = temp->next;
         }
 
         if (!temp) {
-            printf("Error: Invalid Flight ID. Please choose a valid flight.\n");
+            printf("Error: Invalid Flight ID or no seats available. Please choose a valid flight.\n");
         } else {
-            break; // Valid flight ID found, exit the loop
+            break; // Valid flight ID found with available seats, exit the loop
         }
     }
 
@@ -424,7 +437,6 @@ void bookTickets(char* username) {
 
     printf("Tickets booked successfully!\n");
 }
-
 
 void updateBooking(char* username) {
     FILE* file = fopen("bookings.txt", "r");
