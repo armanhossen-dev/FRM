@@ -5,14 +5,16 @@
 #define MAX_NAME_LEN 50
 #define MAX_PASS_LEN 20
 
-// Structures
+
 typedef struct Flight {
     int flightID;
     char destination[50];
     char date[20];
     int seatsAvailable;
+    float seatPrice; // Added seat price
     struct Flight* next;
 } Flight;
+
 
 typedef struct User {
     char username[MAX_NAME_LEN];
@@ -83,35 +85,7 @@ int isAdminStackEmpty() {
     return adminLoginStack == NULL;
 }
 
-// File Handling
-void loadFlights() {
-    FILE* file = fopen(FLIGHT_FILE, "r");
-    if (!file) return;
 
-    Flight* temp;
-    while (!feof(file)) {
-        temp = (Flight*)malloc(sizeof(Flight));
-        if (fscanf(file, "%d %s %s %d", &temp->flightID, temp->destination, temp->date, &temp->seatsAvailable) != 4) {
-            free(temp);
-            break;
-        }
-        temp->next = flightList;
-        flightList = temp;
-    }
-    fclose(file);
-}
-
-void saveFlights() {
-    FILE* file = fopen(FLIGHT_FILE, "w");
-    if (!file) return;
-
-    Flight* temp = flightList;
-    while (temp) {
-        fprintf(file, "%d %s %s %d\n", temp->flightID, temp->destination, temp->date, temp->seatsAvailable);
-        temp = temp->next;
-    }
-    fclose(file);
-}
 
 void loadUsers() {
     FILE* file = fopen(USER_FILE, "r");
@@ -178,6 +152,42 @@ void adminDashboard() {
     } while (choice != 4);
 }
 
+
+void saveFlights() {
+    FILE* file = fopen(FLIGHT_FILE, "w");
+    if (!file) {
+        printf("Error: Unable to open flight file for saving.\n");
+        return;
+    }
+
+    Flight* temp = flightList;
+    while (temp) {
+        fprintf(file, "%d %s %s %d %.2f\n", temp->flightID, temp->destination, temp->date, temp->seatsAvailable, temp->seatPrice);
+        temp = temp->next;
+    }
+    fclose(file);
+}
+
+void loadFlights() {
+    FILE* file = fopen(FLIGHT_FILE, "r");
+    if (!file) return;
+
+    Flight* temp;
+    while (!feof(file)) {
+        temp = (Flight*)malloc(sizeof(Flight));
+        if (fscanf(file, "%d %s %s %d %f", &temp->flightID, temp->destination, temp->date, &temp->seatsAvailable, &temp->seatPrice) != 5) {
+            free(temp);
+            break;
+        }
+        temp->next = flightList;
+        flightList = temp;
+    }
+    fclose(file);
+}
+
+
+
+
 void viewAvailableFlights() {
     Flight* temp = flightList;
     printf("Available Flights:\n");
@@ -193,16 +203,27 @@ void viewAvailableFlights() {
 
 void addNewFlight() {
     Flight* newFlight = (Flight*)malloc(sizeof(Flight));
+    if (!newFlight) {
+        printf("Error: Memory allocation failed.\n");
+        return;
+    }
+
     printf("Enter Flight ID: ");
     scanf("%d", &newFlight->flightID);
+
     printf("Enter Destination: ");
     scanf("%s", newFlight->destination);
+
     printf("Enter Date (YYYY-MM-DD): ");
     scanf("%s", newFlight->date);
+
     printf("Enter Seats Available: ");
     scanf("%d", &newFlight->seatsAvailable);
 
-    newFlight->next = flightList;
+    printf("Enter Seat Price: ");
+    scanf("%f", &newFlight->seatPrice);
+
+    newFlight->next = flightList; // Add to the beginning of the linked list
     flightList = newFlight;
 
     saveFlights();
@@ -211,6 +232,9 @@ void addNewFlight() {
     printf("Press Enter to continue...");
     getchar();
 }
+
+
+
 
 void updateFlight() {
     int flightID, seats;
@@ -364,7 +388,6 @@ void userDashboard(char* username) {
         }
     } while (choice != 4);
 }
-
 void bookTickets(char* username) {
     FILE* file = fopen("bookings.txt", "a");
     if (!file) {
@@ -373,8 +396,8 @@ void bookTickets(char* username) {
     }
 
     int flightID, seats;
+    float totalCost;
     Flight* temp;
-    int availableFlights = 0;
 
     printf("Book Tickets\n");
 
@@ -382,36 +405,25 @@ void bookTickets(char* username) {
         // Display available flights
         printf("Available Flights:\n");
         temp = flightList;
-        availableFlights = 0;
-
         while (temp) {
-            if (temp->seatsAvailable > 0) { // Only show flights with available seats
-                printf("Flight ID: %d, Destination: %s, Date: %s, Seats Available: %d\n",
-                       temp->flightID, temp->destination, temp->date, temp->seatsAvailable);
-                availableFlights++;
-            }
+            printf("Flight ID: %d, Destination: %s, Date: %s, Seats Available: %d, Seat Price: $%.2f\n",
+                   temp->flightID, temp->destination, temp->date, temp->seatsAvailable, temp->seatPrice);
             temp = temp->next;
-        }
-
-        if (availableFlights == 0) {
-            printf("No flights with available seats. Booking not possible.\n");
-            fclose(file);
-            return; // Exit the function if no flights are available
         }
 
         printf("Enter Flight ID to book: ");
         scanf("%d", &flightID);
 
-        // Check if the flight ID exists and has available seats
+        // Check if the flight ID exists
         temp = flightList;
-        while (temp && (temp->flightID != flightID || temp->seatsAvailable <= 0)) {
+        while (temp && temp->flightID != flightID) {
             temp = temp->next;
         }
 
         if (!temp) {
-            printf("Error: Invalid Flight ID or no seats available. Please choose a valid flight.\n");
+            printf("Error: Invalid Flight ID. Please choose a valid flight.\n");
         } else {
-            break; // Valid flight ID found with available seats, exit the loop
+            break; // Valid flight ID found, exit the loop
         }
     }
 
@@ -428,15 +440,28 @@ void bookTickets(char* username) {
         }
     }
 
-    temp->seatsAvailable -= seats; // Deduct seats
-    saveFlights(); // Save updated flight data
+    totalCost = seats * temp->seatPrice; // Calculate the total cost
+    printf("Total cost for booking %d seats: $%.2f\n", seats, totalCost);
 
-    // Save booking to file
-    fprintf(file, "%s %d %d\n", username, flightID, seats);
+    char confirm;
+    printf("Do you want to proceed with the booking? (y/n): ");
+    getchar(); // Clear the input buffer
+    scanf("%c", &confirm);
+
+    if (confirm == 'y' || confirm == 'Y') {
+        temp->seatsAvailable -= seats; // Deduct seats
+        saveFlights(); // Save updated flight data
+
+        // Save booking to file
+        fprintf(file, "%s %d %d %.2f\n", username, flightID, seats, totalCost);
+        printf("Tickets booked successfully!\n");
+    } else {
+        printf("Booking canceled.\n");
+    }
+
     fclose(file);
-
-    printf("Tickets booked successfully!\n");
 }
+
 
 void updateBooking(char* username) {
     FILE* file = fopen("bookings.txt", "r");
