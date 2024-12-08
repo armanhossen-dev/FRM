@@ -372,46 +372,59 @@ void bookTickets(char* username) {
     }
 
     int flightID, seats;
-    Flight* temp = flightList;
+    Flight* temp;
 
     printf("Book Tickets\n");
-    printf("Available Flights:\n");
-    while (temp) {
-        printf("Flight ID: %d, Destination: %s, Date: %s, Seats Available: %d\n",
-               temp->flightID, temp->destination, temp->date, temp->seatsAvailable);
-        temp = temp->next;
+
+    while (1) {
+        // Display available flights
+        printf("Available Flights:\n");
+        temp = flightList;
+        while (temp) {
+            printf("Flight ID: %d, Destination: %s, Date: %s, Seats Available: %d\n",
+                   temp->flightID, temp->destination, temp->date, temp->seatsAvailable);
+            temp = temp->next;
+        }
+
+        printf("Enter Flight ID to book: ");
+        scanf("%d", &flightID);
+
+        // Check if the flight ID exists
+        temp = flightList;
+        while (temp && temp->flightID != flightID) {
+            temp = temp->next;
+        }
+
+        if (!temp) {
+            printf("Error: Invalid Flight ID. Please choose a valid flight.\n");
+        } else {
+            break; // Valid flight ID found, exit the loop
+        }
     }
 
-    printf("Enter Flight ID to book: ");
-    scanf("%d", &flightID);
-    printf("Enter number of seats to book: ");
-    scanf("%d", &seats);
+    while (1) {
+        printf("Enter number of seats to book: ");
+        scanf("%d", &seats);
 
-    temp = flightList;
-    while (temp && temp->flightID != flightID) {
-        temp = temp->next;
+        if (seats <= 0) {
+            printf("Error: Number of seats must be greater than 0.\n");
+        } else if (temp->seatsAvailable < seats) {
+            printf("Error: Not enough seats available. Available seats: %d.\n", temp->seatsAvailable);
+        } else {
+            break; // Valid seat count
+        }
     }
 
-    if (!temp) {
-        printf("Error: Flight not found.\n");
-        fclose(file);
-        return;
-    }
-
-    if (temp->seatsAvailable < seats) {
-        printf("Error: Not enough seats available.\n");
-        fclose(file);
-        return;
-    }
-
-    temp->seatsAvailable -= seats;
+    temp->seatsAvailable -= seats; // Deduct seats
     saveFlights(); // Save updated flight data
 
+    // Save booking to file
     fprintf(file, "%s %d %d\n", username, flightID, seats);
     fclose(file);
 
     printf("Tickets booked successfully!\n");
 }
+
 
 void updateBooking(char* username) {
     FILE* file = fopen("bookings.txt", "r");
